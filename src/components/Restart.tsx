@@ -1,12 +1,13 @@
-import styled from 'styled-components';
-import { MdRestartAlt } from 'react-icons/md';
+import styled from "styled-components";
+import { MdRestartAlt } from "react-icons/md";
 
-import { useThemeContext } from '../hooks/useTheme';
+import { useThemeContext } from "../hooks/useTheme";
 
-import Tooltip from './Tooltip';
+import Tooltip from "./Tooltip";
 
-type RestartProps = {
+type Wordschangeprops = {
   restart: () => void;
+  changeWords: () => void;
 };
 
 const StyledButton = styled.button`
@@ -16,23 +17,24 @@ const StyledButton = styled.button`
   }
 `;
 
-const Restart = ({ restart }: RestartProps) => {
+const Wordschange = ({ restart, changeWords }: Wordschangeprops) => {
   const { systemTheme } = useThemeContext();
   return (
-    <div className='mt-10'>
-      <Tooltip tooltipId='Restart' delayHide={200}>
-        <div className='flex items-center justify-center'>
+    <div className="mt-10">
+      <Tooltip tooltipId="Restart" delayHide={200}>
+        <div className="flex items-center justify-center">
           <StyledButton
             theme={systemTheme}
             onClick={() => {
               restart();
+              changeWords();
             }}
             className={`rotate-0 rounded-full p-3 transition delay-200 ease-out hover:rotate-180 `}
-            data-tooltip-id='Restart'
-            data-tooltip-content='Restart Test'
-            data-tooltip-place='bottom'
+            data-tooltip-id="Restart"
+            data-tooltip-content="Change Words"
+            data-tooltip-place="bottom"
           >
-            <MdRestartAlt className='text-2xl lg:text-3xl ' />
+            <MdRestartAlt className="text-2xl lg:text-3xl " />
           </StyledButton>
         </div>
       </Tooltip>
@@ -40,4 +42,4 @@ const Restart = ({ restart }: RestartProps) => {
   );
 };
 
-export default Restart;
+export default Wordschange;
