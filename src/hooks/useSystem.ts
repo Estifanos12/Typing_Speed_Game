@@ -1,19 +1,19 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
-import { useCountdown } from './useCountdown';
-import { useKeyDown } from './useKeyDown';
-import { useLocalStorage } from './useLocalStorage';
-import { useModal } from './useModal';
-import { useWord } from './useWord';
+import { useCountdown } from "./useCountdown";
+import { useKeyDown } from "./useKeyDown";
+import { useLocalStorage } from "./useLocalStorage";
+import { useModal } from "./useModal";
+import { useWord } from "./useWord";
 
 import {
   calculateAccuracy,
   calculateErrorPercentage,
   calculateWPM,
-} from '../utils';
+} from "../utils";
 
-import type { Results } from '../types';
-import type { HistoryType } from '../types';
+import type { Results } from "../types";
+import type { HistoryType } from "../types";
 
 export const useSystem = () => {
   const [results, setResults] = useState<Results>({
@@ -22,17 +22,17 @@ export const useSystem = () => {
     cpm: 0,
     error: 0,
   });
-
   const [history, setHistory] = useState<HistoryType>({
-    wordHistory: '',
-    typedHistory: '',
+    wordHistory: "",
+    typedHistory: "",
   });
-
-  const { setLocalStorageValue, getLocalStorageValue } = useLocalStorage();
   const [wordContainerFocused, setWordContainerFocused] = useState(false);
-  const [time, setTime] = useState(() => getLocalStorageValue('time') || 15000);
+  const [level, setLevel] = useState<number>(30);
+  const { word, updateWord, totalWord } = useWord(level);
+  const { setLocalStorageValue, getLocalStorageValue } = useLocalStorage();
+  const [time, setTime] = useState(() => getLocalStorageValue("time") || 15000);
   const { countdown, resetCountdown, startCountdown } = useCountdown(time);
-  const { word, updateWord, totalWord } = useWord(30);
+
   const {
     charTyped,
     typingState,
@@ -47,19 +47,31 @@ export const useSystem = () => {
 
   const restartTest = useCallback(() => {
     resetCountdown();
-    updateWord(true);
     resetCursorPointer();
     resetCharTyped();
-    setTypingState('idle');
-    setTotalCharacterTyped('');
+    setTypingState("idle");
+    setTotalCharacterTyped("");
   }, [
     resetCountdown,
-    updateWord,
     resetCursorPointer,
     resetCharTyped,
     setTypingState,
     setTotalCharacterTyped,
   ]);
+
+  const changeParagraph = () => {
+    updateWord(true);
+  };
+
+  const increaseLevel = () => {
+    updateWord();
+    setLevel(50);
+  };
+
+  const decreaseLevel = () => {
+    setLevel(30);
+    updateWord();
+  };
 
   const checkCharacter = useCallback(
     (index: number) => {
@@ -78,9 +90,9 @@ export const useSystem = () => {
     resetCursorPointer();
   }
 
-  if (typingState === 'start') {
+  if (typingState === "start") {
     startCountdown();
-    setTypingState('typing');
+    setTypingState("typing");
   }
 
   if (countdown === 0) {
@@ -100,11 +112,12 @@ export const useSystem = () => {
       typedHistory: totalCharacterTyped,
     });
 
-    openModal('result');
+    openModal("result");
     restartTest();
   }
 
   return {
+    level,
     charTyped,
     countdown,
     cursorPosition,
@@ -124,5 +137,9 @@ export const useSystem = () => {
     checkCharacter,
     closeModal,
     openModal,
+    changeParagraph,
+    increaseLevel,
+    decreaseLevel,
+    setLevel,
   };
 };
